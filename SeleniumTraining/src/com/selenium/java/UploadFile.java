@@ -34,6 +34,7 @@ public class UploadFile {
 			username.sendKeys("admin");
 		}
 		driver.findElement(By.id("password")).sendKeys("admin@123");
+		driver.findElement(By.linkText(linkText))
 		driver.findElement(By.id("form-login_submitAuth")).click();
 		driver.findElement(By.xpath("//*[@class='block-items-admin']/ul/li[4]/a")).click();
 		//Code to upload a file
