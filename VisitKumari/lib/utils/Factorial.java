@@ -19,7 +19,7 @@ public class Factorial {
             number=getInput.nextInt();
             value=factorial(number);
         }catch(InputMismatchException e){
-            System.out.println("Value Entered is not an Integer, Please try again with valid values");
+            System.out.println("Value Entered is not an Integer, Please try again with valid value");
         }
         System.out.println("Factorial :" + value);
     }
