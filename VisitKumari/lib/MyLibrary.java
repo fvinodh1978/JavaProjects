@@ -6,7 +6,7 @@ public class MyLibrary {
 	public MyLibrary(String nameValue, int ageValue){
 		name=nameValue;
 		age=ageValue;
-		System.out.println("In Parameterised Constructor name/age");
+		System.out.println("In Parameterised Constructor name/age.");
 	}
 	
 	public MyLibrary(int ageValue, String nameValue){
