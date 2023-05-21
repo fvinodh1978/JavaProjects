@@ -1,5 +1,6 @@
 package BlackPepper.com;
 
-public class Home {
+public class Hom1{
+System
     
 }
