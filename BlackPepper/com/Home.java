@@ -1,6 +1,7 @@
 package BlackPepper.com;
 
 public class Home{
-System.out.println("Vinodh");
-    
+    public static void main(String[] args) {
+        System.out.println("Vinodh");
+    }
 }
