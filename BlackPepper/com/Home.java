@@ -1,4 +1,4 @@
-package BlackPepper;
+package BlackPepper.com;
 
 public class Home {
     
