@@ -1,6 +1,7 @@
 package BlackPepper.com;
 
-public class Hom1{
-System
-    
+public class Home{
+    public static void main(String[] args) {
+        System.out.println("Vinodh");
+    }
 }
