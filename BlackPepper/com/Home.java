@@ -1,6 +1,6 @@
 package BlackPepper.com;
 
-public class Hom1{
-System
+public class Home{
+System.out.println("Vinodh");
     
 }
