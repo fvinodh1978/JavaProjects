@@ -11,13 +11,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 // Main class
 public class ExcelUtils {
     // Main driver method
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ExcelUtils eu = new ExcelUtils();
         String inputFile = "";
         String outFile = "";
@@ -40,10 +41,16 @@ public class ExcelUtils {
         inputFile = "C:\\Users\\054544744\\IdeaProjects\\FST Java\\src\\main\\resources\\Users.xlsx";
         outFile = "C:\\Users\\054544744\\IdeaProjects\\FST Java\\src\\main\\resources";
         eu.convertExcelToCSV(inputFile, outFile);
+
+        // Convert CSV to Excel File
+        inputFile = "C:\\Users\\054544744\\IdeaProjects\\FST Java\\src\\main\\resources\\users1.csv";
+        outFile = "C:\\Users\\054544744\\IdeaProjects\\FST Java\\src\\main\\resources\\Users2.xlsx";
+        eu.convertCsvToExcel(inputFile, outFile);
     }
 
     public void convertExcelToCSV(String inputFile, String outFile) {
         FileInputStream inp = null;
+        DataFormatter formatter = new DataFormatter();
         int colCount = 0;
         int rowCount = 0;
         try {
@@ -72,30 +79,28 @@ public class ExcelUtils {
                         Cell cell = row.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         System.out.printf("Current cell = %d\n", j);
 //                        cell = cellIterator.next();
+                        CellType type = cell.getCellType();
 
-                        if (!(cell == null)) {
-                            CellType type = cell.getCellType();
-
-                            System.out.println("Current cell Type = " + type);
-                            if (type == CellType.BOOLEAN) {
-                                System.out.printf("Current cell = %s\n", cell.getBooleanCellValue());
-                                data.append(cell.getBooleanCellValue() + ",");
-                            } else if (type == CellType.NUMERIC) {
-                                System.out.printf("Current cell = %f\n", cell.getNumericCellValue());
-                                data.append(cell.getNumericCellValue() + ",");
-                            } else if (type == CellType.STRING) {
-                                System.out.printf("Current cell = %s\n", cell.getStringCellValue());
-                                data.append(cell.getStringCellValue() + ",");
-                            } else if (type == CellType.BLANK) {
-                                System.out.println("In Blank");
-                                data.append(",");
-                            } else if (cell == null || cell.getStringCellValue() == "") {
-                                System.out.println("In Null");
-                                data.append(",");
-                            } else {
-                                System.out.println("In Else");
-                                data.append(cell + ",");
-                            }
+                        System.out.println("Current cell Type = " + type);
+                        if (type == CellType.BOOLEAN) {
+                            System.out.printf("Current cell = %s\n", cell.getBooleanCellValue());
+                            data.append(cell.getBooleanCellValue() + ",");
+                        } else if (type == CellType.NUMERIC) {
+                            String numericVal = formatter.formatCellValue(cell);
+                            System.out.println("Current cell = " + numericVal);
+                            data.append(numericVal + ",");
+                        } else if (type == CellType.STRING) {
+                            System.out.printf("Current cell = %s\n", cell.getStringCellValue());
+                            data.append(cell.getStringCellValue() + ",");
+                        } else if (type == CellType.BLANK) {
+                            System.out.println("In Blank");
+                            data.append(",");
+//                        } else if (cell == null || cell.getStringCellValue() == "") {
+//                            System.out.println("In Null");
+//                            data.append(",");
+//                        } else {
+//                            System.out.println("In Else");
+//                            data.append(cell + ",");
                         }
                     }
                     data.append('\n');
@@ -269,5 +274,60 @@ public class ExcelUtils {
 //            }
         }
         return result;
+    }
+
+    public void convertCsvToExcel(String csvFile, String excelFile) throws IOException {
+
+        ArrayList arList = null;
+        ArrayList al = null;
+        String fName = csvFile;
+        String thisLine;
+        int count = 0;
+        FileInputStream fis = new FileInputStream(fName);
+        DataInputStream myInput = new DataInputStream(fis);
+        int i = 0;
+        arList = new ArrayList();
+        while ((thisLine = myInput.readLine()) != null) {
+            al = new ArrayList();
+            String[] strar = thisLine.split(",");
+            Collections.addAll(al, strar);
+            arList.add(al);
+            i++;
+        }
+
+        try {
+            XSSFWorkbook hwb = new XSSFWorkbook();
+            XSSFSheet sheet = hwb.createSheet("sheet1");
+            for (int k = 0; k < arList.size(); k++) {
+                ArrayList ardata = (ArrayList) arList.get(k);
+                XSSFRow row = sheet.createRow(k);
+                for (int p = 0; p < ardata.size(); p++) {
+                    XSSFCell cell = row.createCell((short) p);
+                    String data = ardata.get(p).toString();
+                    if (data.startsWith("=")) {
+                        cell.setCellType(CellType.STRING);
+                        data = data.replaceAll("\"", "");
+                        data = data.replaceAll("=", "");
+                        cell.setCellValue(data);
+                    } else if (data.startsWith("\"")) {
+                        data = data.replaceAll("\"", "");
+                        cell.setCellType(CellType.STRING);
+                        cell.setCellValue(data);
+                    } else {
+                        data = data.replaceAll("\"", "");
+                        cell.setCellType(CellType.NUMERIC);
+                        cell.setCellValue(data);
+                    }
+                    //*/
+                    // cell.setCellValue(ardata.get(p).toString());
+                }
+            }
+            FileOutputStream fileOut = new FileOutputStream(excelFile);
+            hwb.write(fileOut);
+            fileOut.close();
+            System.out.println("Your excel file has been generated");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } //main method ends
     }
 }
